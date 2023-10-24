@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flasgger import Swagger
-import api.cores as core
+from api.cores import login, details, timetable, calendar
 import json
 
 from colorama import Fore, Back, Style
@@ -60,7 +60,7 @@ def get_access():
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
-    res = core.login.getKey(username, password)
+    res = login.getCookies(username, password)
     return jsonify(res)
 
 @app.route('/course', methods=['POST'])
@@ -116,13 +116,13 @@ def get_course():
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
-    cookie = core.login.fetchCookies(key)
+    cookie = login.fetchCookies(key)
     if cookie['status'] == 'error':
         return jsonify(cookie)
     cookie = json.loads(cookie['cookie'].replace("'", "\""))
     
     try:
-        res = core.details.course(cookie)
+        res = details.course(cookie)
     except:
         return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
     return jsonify(res)
@@ -192,13 +192,13 @@ def get_details():
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
-    cookie = core.login.fetchCookies(key)
+    cookie = login.fetchCookies(key)
     if cookie['status'] == 'error':
         return jsonify(cookie)
     cookie = json.loads(cookie['cookie'].replace("'", "\""))
     
     try:
-        res = core.details.student(cookie)
+        res = details.student(cookie)
     except:
         return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
     
@@ -268,13 +268,13 @@ def get_attendance():
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
-    cookie = core.login.fetchCookies(key)
+    cookie = login.fetchCookies(key)
     if cookie['status'] == 'error':
         return jsonify(cookie)
     cookie = json.loads(cookie['cookie'].replace("'", "\""))
     
     try:
-        res = core.details.attendance(cookie)
+        res = details.attendance(cookie)
     except:
         return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
     
@@ -330,13 +330,13 @@ def get_marks():
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
-    cookie = core.login.fetchCookies(key)
+    cookie = login.fetchCookies(key)
     if cookie['status'] == 'error':
         return jsonify(cookie)
     cookie = json.loads(cookie['cookie'].replace("'", "\""))
     
     try:
-        res = core.details.marks(cookie)
+        res = details.marks(cookie)
     except:
         return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
     return jsonify(res)
@@ -385,13 +385,13 @@ def get_timetable():
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
-    cookie = core.login.fetchCookies(key)
+    cookie = login.fetchCookies(key)
     if cookie['status'] == 'error':
         return jsonify(cookie)
     cookie = json.loads(cookie['cookie'].replace("'", "\""))
     
     try:
-        res = core.timetable.fetch(cookie)
+        res = timetable.fetch(cookie)
     except:
         return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
     
@@ -443,12 +443,12 @@ def get_calendar():
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
-    cookie = core.login.fetchCookies(key)
+    cookie = login.fetchCookies(key)
     if cookie['status'] == 'error':
         return jsonify(cookie)
     cookie = json.loads(cookie['cookie'].replace("'", "\""))
 
-    res = core.calendar.fetch(cookie)
+    res = calendar.fetch(cookie)
     
     return jsonify(res)
 
