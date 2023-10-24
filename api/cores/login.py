@@ -1,7 +1,7 @@
 import requests
 import json
 from secrets import token_hex
-from modules import crypto, db, constants
+from api.cores.modules import crypto, db, constants
 
 URL = "https://academia.srmist.edu.in/accounts/signin.ac"
 
