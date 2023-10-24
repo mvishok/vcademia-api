@@ -66,7 +66,6 @@ def saveCookies(cookies):
         cookies = crypto.encrypt(cookies).decode('utf-8')
         sql = """INSERT INTO sessions (`key`, `session`) VALUES (%s, %s)"""
         db.cursor.execute(sql, (key, cookies))
-        db.db.commit()
         return key
     except Exception as e:
         return "DBERROR"
