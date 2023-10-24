@@ -64,10 +64,11 @@ def saveCookies(cookies):
     try:
         key = token_hex(8)
         cookies = crypto.encrypt(cookies).decode('utf-8')
-        sql = """INSERT INTO sessions (`key`, `session`) VALUES (%s, %s)"""
+        sql = """INSERT INTO sessions (key, session) VALUES (%s, %s)"""
         db.cursor.execute(sql, (key, cookies))
         return key
     except Exception as e:
+        breakpoint()
         return "DBERROR"
 
 def fetchCookies(key):
@@ -82,7 +83,7 @@ def fetchCookies(key):
     "success" and the decrypted session cookie is returned as the value for the "cookie" key. If the key
     is invalid or no session is found, the status is set to "error
     """
-    sql = """SELECT session FROM sessions WHERE `key` = %s"""
+    sql = """SELECT session FROM sessions WHERE key = %s"""
     db.cursor.execute(sql, (key,))
     res = db.cursor.fetchone()
     if res:
