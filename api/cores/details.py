@@ -1,6 +1,6 @@
 import requests, json
 from bs4 import BeautifulSoup
-from module import constants
+from modules import constants
 
 URL = "https://academia.srmist.edu.in/srm_university/academia-academic-services/page/My_Time_Table_2023_24"
 URL2 = "https://academia.srmist.edu.in/srm_university/academia-academic-services/page/My_Attendance"
