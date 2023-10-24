@@ -1,6 +1,6 @@
 import requests, json
 from bs4 import BeautifulSoup
-from modules import constants
+from api.cores.modules import constants
 
 URL = "https://academia.srmist.edu.in/srm_university/academia-academic-services/page/Academic_Planner_2023_24_ODD"
 
