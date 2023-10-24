@@ -1,10 +1,6 @@
 import requests, json
 from bs4 import BeautifulSoup
 from .details import course
-
-from sys import path as syspath
-from os import path as ospath
-syspath.append(ospath.abspath(ospath.join(ospath.dirname(__file__), '..')))
 from module import constants
 
 URL = 'https://academia.srmist.edu.in/srm_university/academia-academic-services/page/Unified_Time_Table_2023_Batch_1'
