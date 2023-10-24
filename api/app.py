@@ -60,7 +60,7 @@ def get_access():
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
-    res = login.getCookies(username, password)
+    res = login.getKey(username, password)
     return jsonify(res)
 
 @app.route('/course', methods=['POST'])
