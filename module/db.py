@@ -1,12 +1,8 @@
-import mysql.connector
+import psycopg2
 from os import getenv
 
-db = mysql.connector.connect(
-    host=getenv('DB_HOST'),
-    user=getenv('DB_USER'),
-    passwd=getenv('DB_PASS'),
-    database="academia"
-)
-
-cursor = db.cursor()
+connStr = getenv('DATABASE_URL')
+conn = psycopg2.connect(connStr)
+cursor = conn.cursor()
+conn.autocommit = True
 

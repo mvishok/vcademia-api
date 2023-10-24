@@ -1,0 +1,4 @@
+CREATE TABLE sessions (
+  key VARCHAR(16) PRIMARY KEY,
+  session TEXT NOT NULL
+);
