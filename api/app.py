@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flasgger import Swagger
-import core
+import cores as core
 import json
 
 from colorama import Fore, Back, Style
