@@ -3,8 +3,6 @@ from flasgger import Swagger
 from api.cores import login, details, timetable, calendar
 import json
 
-from colorama import Fore, Back, Style
-
 app = Flask(__name__)
 app.config['url_sort_key'] = None
 app.config['SWAGGER'] = {
@@ -18,7 +16,34 @@ app.config['SWAGGER'] = {
     }
 }
 
-swagger = Swagger(app)
+#swagger template to define authkey headers
+SWAGGER_TEMPLATE = {"securityDefinitions": {"AccessKey": {"type": "apiKey", "name": "x-access-token", "in": "header"}}}
+
+swagger = Swagger(app, template=SWAGGER_TEMPLATE)
+
+@app.route('/ping', methods=['GET'])
+def ping():
+    """
+    Endpoint to check server status
+    ---
+    tags:
+        - Status
+    summary: Check server status
+    description: This endpoint checks the status of the server.
+    responses:
+        200:
+            description: Server is running
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                        example: success
+                    message:
+                        type: string
+                        example: Server is running
+    """
+    return jsonify({'status': 'success', 'message': 'Server is running'})
 
 @app.route('/key', methods=['POST'])
 def get_access():
@@ -63,7 +88,7 @@ def get_access():
     res = login.getKey(username, password)
     return jsonify(res)
 
-@app.route('/course', methods=['POST'])
+@app.route('/course', methods=['GET'])
 def get_course():
     """
     Endpoint to get course details
@@ -74,12 +99,8 @@ def get_course():
     description: This endpoint retrieves course details based on the provided access key.
     consumes:
         - application/x-www-form-urlencoded
-    parameters:
-        - name: key
-          in: formData
-          type: string
-          required: true
-          description: Access key obtained from the 'get_access' endpoint.
+    security:
+        - AccessKey: ['x-access-token']
 
     responses:
         200:
@@ -112,7 +133,7 @@ def get_course():
                             "status": "success"
     """
     try:
-        key = request.form['key']
+        key = request.headers.get('X-Access-Token')
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
@@ -127,7 +148,7 @@ def get_course():
         return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
     return jsonify(res)
 
-@app.route('/details', methods=['POST'])
+@app.route('/details', methods=['GET'])
 def get_details():
     """
     Endpoint to get student details
@@ -138,12 +159,8 @@ def get_details():
     description: This endpoint retrieves student details for a user using an access key.
     consumes:
         - application/x-www-form-urlencoded
-    parameters:
-        - name: key
-          in: formData
-          type: string
-          required: true
-          description: Access key obtained from the authentication endpoint.
+    security:
+        - AccessKey: ['x-access-token']
 
     responses:
         200:
@@ -188,7 +205,7 @@ def get_details():
     """
     
     try:
-        key = request.form['key']
+        key = request.headers.get('X-Access-Token')
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
@@ -202,10 +219,9 @@ def get_details():
     except:
         return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
     
-    print(Fore.GREEN + "[SUCCESS]" + Style.RESET_ALL + " All routes passed successfully with status code 200 OK")
     return jsonify(res)
 
-@app.route('/attendance', methods=['POST'])
+@app.route('/attendance', methods=['GET'])
 def get_attendance():
     """
     Endpoint to get attendance details
@@ -216,12 +232,8 @@ def get_attendance():
     description: This endpoint retrieves attendance details for a user using an access key.
     consumes:
         - application/x-www-form-urlencoded
-    parameters:
-        - name: key
-          in: formData
-          type: string
-          required: true
-          description: Access key obtained from the authentication endpoint.
+    security:
+        - AccessKey: ['x-access-token']
 
     responses:
         200:
@@ -264,7 +276,7 @@ def get_attendance():
             description: Internal Server Error
     """
     try:
-        key = request.form['key']
+        key = request.headers.get('X-Access-Token')
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
@@ -280,7 +292,7 @@ def get_attendance():
     
     return jsonify(res)
 
-@app.route('/marks', methods=['POST'])
+@app.route('/marks', methods=['GET'])
 def get_marks():
     """
     Endpoint to get marks details
@@ -291,12 +303,8 @@ def get_marks():
     description: This endpoint retrieves marks details for a user using an access key.
     consumes:
         - application/x-www-form-urlencoded
-    parameters:
-        - name: key
-          in: formData
-          type: string
-          required: true
-          description: Access key obtained from the authentication endpoint.
+    security:
+        - AccessKey: ['x-access-token']
 
     responses:
         200:
@@ -326,7 +334,7 @@ def get_marks():
             description: Internal Server Error
     """
     try:
-        key = request.form['key']
+        key = request.headers.get('X-Access-Token')
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
@@ -341,7 +349,7 @@ def get_marks():
         return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
     return jsonify(res)
 
-@app.route('/timetable', methods=['POST'])
+@app.route('/timetable', methods=['GET'])
 def get_timetable():
     """
     Endpoint to get timetable details
@@ -352,12 +360,8 @@ def get_timetable():
     description: This endpoint retrieves timetable details based on the provided access key.
     consumes:
         - application/x-www-form-urlencoded
-    parameters:
-        - name: key
-          in: formData
-          type: string
-          required: true
-          description: Access key obtained from the 'get_access' endpoint.
+    security:
+        - AccessKey: ['x-access-token']
 
     responses:
         200:
@@ -381,7 +385,7 @@ def get_timetable():
                             "status": "success"
     """
     try:
-        key = request.form['key']
+        key = request.headers.get('X-Access-Token')
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
@@ -397,7 +401,7 @@ def get_timetable():
     
     return jsonify(res)
 
-@app.route('/calendar', methods=['POST'])
+@app.route('/calendar', methods=['GET'])
 def get_calendar():
     """
     Endpoint to get calendar details
@@ -408,12 +412,8 @@ def get_calendar():
     description: This endpoint retrieves calendar details based on the provided access key.
     consumes:
         - application/x-www-form-urlencoded
-    parameters:
-        - name: key
-          in: formData
-          type: string
-          required: true
-          description: Access key obtained from the 'get_access' endpoint.
+    security:
+        - AccessKey: ['x-access-token']
 
     responses:
         200:
@@ -439,7 +439,7 @@ def get_calendar():
                             "status": "success"
     """
     try:
-        key = request.form['key']
+        key = request.headers.get('X-Access-Token')
     except:
         return jsonify({'status': 'error', 'message': 'Invalid request'})
     
