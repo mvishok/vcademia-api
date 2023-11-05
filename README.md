@@ -39,5 +39,5 @@ curl -X POST "http://localhost:5000/key" -H "accept: application/json" -H "Conte
 
 2. To obtain data from other endpoints:
 ```
-#curl -X GET "http://localhost:5000/course" -H "accept: application/json" -H "x-access-token: accesskey"
+#curl -X GET "http://localhost:5000/<endpoint>" -H "accept: application/json" -H "x-access-token: accesskey"
 ```
