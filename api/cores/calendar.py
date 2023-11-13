@@ -21,7 +21,8 @@ def fetch(cookie):
     """
     
     cookie['ZCNEWUIPUBLICPORTAL']='true'
-
+    #debug
+    return {'status': 'success', 'calendar': requests.get(URL, headers=constants.HEADERS, cookies=cookie).text}
     res = json.loads(requests.get(URL, headers=constants.HEADERS, cookies=cookie).text)['HTML']
     soup = BeautifulSoup(res, 'html.parser')
     table = BeautifulSoup(soup.find('div', class_='zc-pb-embed-placeholder-content').get('zmlvalue'), 'html.parser').findAll('table')[0]
