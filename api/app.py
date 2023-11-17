@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask import url_for
 from flasgger import Swagger
 from api.core import cal, details, login, timetable
 
@@ -22,7 +23,7 @@ swagger = Swagger(app, template=SWAGGER_TEMPLATE)
 
 @app.route('/favicon.ico', methods=['GET'])
 def favicon():
-    return app.send_static_file('img/favicon.ico')
+    return url_for('static', filename='img/favicon.ico')
 
 @app.route('/ping', methods=['GET'])
 def ping():
