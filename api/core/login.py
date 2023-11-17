@@ -19,9 +19,9 @@ def getSession(user, passw):
     with requests.Session() as session:
         req = session.post("https://academia.srmist.edu.in/accounts/signin.ac", data=payload, headers=header)
         res = json.loads(req.text)
-        session.get(res['data']['oauthorize_uri'])
         if req.status_code == 200:
             if 'error' not in res.keys():
+                session.get(res['data']['oauthorize_uri'])
                 return session
             else:
                 return "ERROR:", res['error']
