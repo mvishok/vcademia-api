@@ -34,7 +34,7 @@ def saveToken(user, passw):
         key = token_hex(8)
         sql = """INSERT INTO sessions (key, un, pw) VALUES (%s, %s, %s)"""
         modules.cursor.execute(sql, (key, modules.encrypt(user).decode('utf-8'), modules.encrypt(passw).decode('utf-8')))
-        return key
+        return {'status': 'success', 'key': key}
     else:
         return sess[5:]
     
