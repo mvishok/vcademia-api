@@ -19,6 +19,11 @@ app.config['SWAGGER'] = {
 SWAGGER_TEMPLATE = {"securityDefinitions": {"AccessKey": {"type": "apiKey", "name": "x-access-token", "in": "header"}}}
 
 swagger = Swagger(app, template=SWAGGER_TEMPLATE)
+
+@app.route('/favicon.ico', methods=['GET'])
+def favicon():
+    return app.send_static_file('img/favicon.ico')
+
 @app.route('/ping', methods=['GET'])
 def ping():
     """
