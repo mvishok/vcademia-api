@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flasgger import Swagger
-from core import cal, details, login, timetable
+from api.core import cal, details, login, timetable
 
 app = Flask(__name__)
 app.config['url_sort_key'] = None
