@@ -1,7 +1,6 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request
 from flasgger import Swagger
-from api.cores import login, details, timetable, calendar
-import json
+from core import cal, details, login, timetable
 
 app = Flask(__name__)
 app.config['url_sort_key'] = None
@@ -20,7 +19,6 @@ app.config['SWAGGER'] = {
 SWAGGER_TEMPLATE = {"securityDefinitions": {"AccessKey": {"type": "apiKey", "name": "x-access-token", "in": "header"}}}
 
 swagger = Swagger(app, template=SWAGGER_TEMPLATE)
-
 @app.route('/ping', methods=['GET'])
 def ping():
     """
@@ -43,7 +41,7 @@ def ping():
                         type: string
                         example: Server is running
     """
-    return jsonify({'status': 'success', 'message': 'Server is running'})
+    return {'status': 'success', 'message': 'Server is running'}
 
 @app.route('/key', methods=['POST'])
 def get_access():
@@ -83,10 +81,10 @@ def get_access():
         username = request.form['user']
         password = request.form['pass']
     except:
-        return jsonify({'status': 'error', 'message': 'Invalid request'})
+        return {'status': 'error', 'message': 'Invalid request'}
     
-    res = login.getKey(username, password)
-    return jsonify(res)
+    res = login.saveToken(username, password)
+    return res
 
 @app.route('/course', methods=['GET'])
 def get_course():
@@ -135,18 +133,13 @@ def get_course():
     try:
         key = request.headers.get('X-Access-Token')
     except:
-        return jsonify({'status': 'error', 'message': 'Invalid request'})
+        return {'status': 'error', 'message': 'Invalid request'}
     
-    cookie = login.fetchCookies(key)
-    if cookie['status'] == 'error':
-        return jsonify(cookie)
-    cookie = json.loads(cookie['cookie'].replace("'", "\""))
-    
-    try:
-        res = details.course(cookie)
-    except:
-        return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
-    return jsonify(res)
+    session = login.fetchSession(key)
+    if not str(session).startswith("ERROR:"):
+        return details.course(session)
+    else:
+        return {'status': 'error', 'message': session[5:]}
 
 @app.route('/details', methods=['GET'])
 def get_details():
@@ -207,19 +200,13 @@ def get_details():
     try:
         key = request.headers.get('X-Access-Token')
     except:
-        return jsonify({'status': 'error', 'message': 'Invalid request'})
+        return {'status': 'error', 'message': 'Invalid request'}
     
-    cookie = login.fetchCookies(key)
-    if cookie['status'] == 'error':
-        return jsonify(cookie)
-    cookie = json.loads(cookie['cookie'].replace("'", "\""))
-    
-    try:
-        res = details.student(cookie)
-    except:
-        return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
-    
-    return jsonify(res)
+    session = login.fetchSession(key)
+    if not str(session).startswith("ERROR:"):
+        return details.student(session)
+    else:
+        return {'status': 'error', 'message': session[5:]}
 
 @app.route('/attendance', methods=['GET'])
 def get_attendance():
@@ -278,19 +265,13 @@ def get_attendance():
     try:
         key = request.headers.get('X-Access-Token')
     except:
-        return jsonify({'status': 'error', 'message': 'Invalid request'})
+        return {'status': 'error', 'message': 'Invalid request'}
     
-    cookie = login.fetchCookies(key)
-    if cookie['status'] == 'error':
-        return jsonify(cookie)
-    cookie = json.loads(cookie['cookie'].replace("'", "\""))
-    
-    try:
-        res = details.attendance(cookie)
-    except:
-        return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
-    
-    return jsonify(res)
+    session = login.fetchSession(key)
+    if not str(session).startswith("ERROR:"):
+        return details.attendance(session)
+    else:
+        return {'status': 'error', 'message': session[5:]}
 
 @app.route('/marks', methods=['GET'])
 def get_marks():
@@ -336,18 +317,13 @@ def get_marks():
     try:
         key = request.headers.get('X-Access-Token')
     except:
-        return jsonify({'status': 'error', 'message': 'Invalid request'})
+        return {'status': 'error', 'message': 'Invalid request'}
     
-    cookie = login.fetchCookies(key)
-    if cookie['status'] == 'error':
-        return jsonify(cookie)
-    cookie = json.loads(cookie['cookie'].replace("'", "\""))
-    
-    try:
-        res = details.marks(cookie)
-    except:
-        return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
-    return jsonify(res)
+    session = login.fetchSession(key)
+    if not str(session).startswith("ERROR:"):
+        return details.marks(session)
+    else:
+        return {'status': 'error', 'message': session[5:]}
 
 @app.route('/timetable', methods=['GET'])
 def get_timetable():
@@ -387,20 +363,14 @@ def get_timetable():
     try:
         key = request.headers.get('X-Access-Token')
     except:
-        return jsonify({'status': 'error', 'message': 'Invalid request'})
+        return {'status': 'error', 'message': 'Invalid request'}
     
-    cookie = login.fetchCookies(key)
-    if cookie['status'] == 'error':
-        return jsonify(cookie)
-    cookie = json.loads(cookie['cookie'].replace("'", "\""))
+    session = login.fetchSession(key)
+    if not str(session).startswith("ERROR:"):
+        return timetable.fetch(session)
+    else:
+        return {'status': 'error', 'message': session[5:]}
     
-    try:
-        res = timetable.fetch(cookie)
-    except:
-        return jsonify({'status': 'error', 'message': 'Error processing request, please try again later'})
-    
-    return jsonify(res)
-
 @app.route('/calendar', methods=['GET'])
 def get_calendar():
     """
@@ -441,16 +411,13 @@ def get_calendar():
     try:
         key = request.headers.get('X-Access-Token')
     except:
-        return jsonify({'status': 'error', 'message': 'Invalid request'})
+        return {'status': 'error', 'message': 'Invalid request'}
     
-    cookie = login.fetchCookies(key)
-    if cookie['status'] == 'error':
-        return jsonify(cookie)
-    cookie = json.loads(cookie['cookie'].replace("'", "\""))
-
-    res = calendar.fetch(cookie)
-    
-    return jsonify(res)
+    session = login.fetchSession(key)
+    if not str(session).startswith("ERROR:"):
+        return cal.fetch(session)
+    else:
+        return {'status': 'error', 'message': session[5:]}
 
 if __name__ == '__main__':
     app.run(debug=True)
