@@ -42,7 +42,7 @@ def saveToken(user, passw):
 def fetchSession(key):
     sql = """SELECT un, pw FROM sessions WHERE key = %s"""
     modules.connect().execute(sql, (key,))
-    res = modules.cursor.fetchone()
+    res = modules.connect().fetchone()
     if res:
         return getSession(modules.decrypt(res[0]), modules.decrypt(res[1]))
     else:
