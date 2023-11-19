@@ -1,15 +1,7 @@
 from os import getenv
 from cryptography.fernet import Fernet
-import psycopg2
 
 key = getenv("CRYPTO_KEY")
-
-def connect():
-    connStr = getenv("DATABASE_URL")
-    conn = psycopg2.connect(connStr)
-    cursor = conn.cursor()
-    conn.autocommit = True
-    return cursor
 
 def encrypt(data):
     global key

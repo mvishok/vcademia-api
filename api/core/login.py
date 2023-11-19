@@ -1,4 +1,4 @@
-import requests, json
+import requests, json, psycopg2
 from . import modules
 from secrets import token_hex
 
@@ -29,21 +29,32 @@ def getSession(user, passw):
             return "ERROR:", req.status_code
 
 def saveToken(user, passw):
+    connStr = modules.getenv("DATABASE_URL")
+    conn = psycopg2.connect(connStr)
+    cursor = conn.cursor()
+    conn.autocommit = True
     sess = getSession(user, passw)
     if not str(sess).startswith("ERROR"):
 
         key = token_hex(8)
         sql = """INSERT INTO sessions (key, un, pw) VALUES (%s, %s, %s)"""
-        modules.connect().execute(sql, (key, modules.encrypt(user).decode('utf-8'), modules.encrypt(passw).decode('utf-8')))
+        cursor.execute(sql, (key, modules.encrypt(user).decode('utf-8'), modules.encrypt(passw).decode('utf-8')))
+        cursor.close()
+        conn.close()
         return {'status': 'success', 'key': key}
     else:
         return sess[5:]
     
 def fetchSession(key):
+    connStr = modules.getenv("DATABASE_URL")
+    conn = psycopg2.connect(connStr)
+    cursor = conn.cursor()
+    conn.autocommit = True
     sql = """SELECT un, pw FROM sessions WHERE key = %s"""
-    res = modules.connect().execute(sql, (key,))
-    res = res.fetchone()
+    res = cursor.execute(sql, (key,)).fetchone()
     if res:
+        cursor.close()
+        conn.close()
         return getSession(modules.decrypt(res[0]), modules.decrypt(res[1]))
     else:
         return {"status": "error", "error": "Invalid key"}
