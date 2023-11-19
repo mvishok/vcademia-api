@@ -51,7 +51,8 @@ def fetchSession(key):
     cursor = conn.cursor()
     conn.autocommit = True
     sql = """SELECT un, pw FROM sessions WHERE key = %s"""
-    res = cursor.execute(sql, (key,)).fetchone()
+    cursor.execute(sql, (key,))
+    res = cursor.fetchone()
     if res:
         cursor.close()
         conn.close()
