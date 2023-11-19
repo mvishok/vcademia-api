@@ -4,10 +4,12 @@ import psycopg2
 
 key = getenv("CRYPTO_KEY")
 
-connStr = getenv("DATABASE_URL")
-conn = psycopg2.connect(connStr)
-cursor = conn.cursor()
-conn.autocommit = True
+def connect():
+    connStr = getenv("DATABASE_URL")
+    conn = psycopg2.connect(connStr)
+    cursor = conn.cursor()
+    conn.autocommit = True
+    return cursor
 
 def encrypt(data):
     global key
