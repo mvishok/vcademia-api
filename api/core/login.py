@@ -31,16 +31,17 @@ def getSession(user, passw):
 def saveToken(user, passw):
     sess = getSession(user, passw)
     if not str(sess).startswith("ERROR"):
+
         key = token_hex(8)
         sql = """INSERT INTO sessions (key, un, pw) VALUES (%s, %s, %s)"""
-        modules.cursor.execute(sql, (key, modules.encrypt(user).decode('utf-8'), modules.encrypt(passw).decode('utf-8')))
+        modules.connect().execute(sql, (key, modules.encrypt(user).decode('utf-8'), modules.encrypt(passw).decode('utf-8')))
         return {'status': 'success', 'key': key}
     else:
         return sess[5:]
     
 def fetchSession(key):
     sql = """SELECT un, pw FROM sessions WHERE key = %s"""
-    modules.cursor.execute(sql, (key,))
+    modules.connect().execute(sql, (key,))
     res = modules.cursor.fetchone()
     if res:
         return getSession(modules.decrypt(res[0]), modules.decrypt(res[1]))
