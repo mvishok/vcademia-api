@@ -240,7 +240,7 @@ def get_attendance():
                     attendance:
                         type: object
                         properties:
-                            Course Title:
+                            Course Title - Category:
                                 type: array
                                 items:
                                     type: object
