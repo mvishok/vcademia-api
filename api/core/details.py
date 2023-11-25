@@ -66,7 +66,7 @@ def attendance(session):
             rows[indeces[i]+7].text
         ]
 
-        attendance[rows[indeces[i]+1].text.replace('Regular', '')] = l
+        attendance[rows[indeces[i]+1].text.replace('Regular', '')+" "+rows[indeces[i]+3].text] = l
 
     out = {'status': 'success', 'attendance': attendance}
     return out
